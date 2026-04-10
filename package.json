@@ -1,6 +1,6 @@
 {
   "name": "ai-to-interface-design",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate multiple visually distinct UI component prototypes with an in-browser variant picker. Works with OpenCode and Claude Code.",
   "author": "Roland Wallner",
   "license": "MIT",
