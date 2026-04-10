@@ -113,12 +113,12 @@ install_claude() {
   else
     printf "\n${BOLD}Installing for Claude Code (global)...${RESET}\n"
 
-    if ! claude plugin marketplace add I2olanD/ai.to.interface-design; then
+    if ! claude plugin marketplace add I2olanD/ai.to.prototype; then
       printf "${RED}  marketplace add failed${RESET}\n"
       return 1
     fi
 
-    if ! claude plugin install ai-to-interface-design@ai-to-interface-design; then
+    if ! claude plugin install ai-to-prototype@ai-to-prototype; then
       printf "${RED}  plugin install failed${RESET}\n"
       return 1
     fi

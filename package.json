@@ -1,8 +1,0 @@
-{
-  "name": "ai-to-interface-design",
-  "version": "1.0.1",
-  "description": "Generate multiple visually distinct UI component prototypes with an in-browser variant picker.",
-  "author": "Roland Wallner",
-  "license": "MIT",
-  "private": true
-}

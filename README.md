@@ -1,4 +1,4 @@
-# ai.to.interface-design
+# ai.to.prototype
 
 Generate multiple structurally distinct UI component prototypes with an in-browser variant picker.
 
@@ -7,8 +7,8 @@ Generate multiple structurally distinct UI component prototypes with an in-brows
 ### Quick Install
 
 ```bash
-git clone https://github.com/I2olanD/ai.to.interface-design.git
-cd ai.to.interface-design
+git clone https://github.com/I2olanD/ai.to.prototype.git
+cd ai.to.prototype
 ./install.sh
 ```
 
@@ -19,8 +19,8 @@ Auto-detects Claude Code and OpenCode, installs for all found tools.
 #### Claude Code
 
 ```bash
-claude plugin marketplace add I2olanD/ai.to.interface-design
-claude plugin install ai-to-interface-design@ai-to-interface-design
+claude plugin marketplace add I2olanD/ai.to.prototype
+claude plugin install ai-to-prototype@ai-to-prototype
 ```
 
 #### OpenCode
