@@ -1,6 +1,6 @@
 # ai.to.interface-design
 
-A Claude Code and OpenCode plugin that generates multiple structurally distinct UI component prototypes with an in-browser variant picker.
+Generate multiple structurally distinct UI component prototypes with an in-browser variant picker.
 
 ## Install
 
@@ -13,15 +13,19 @@ claude plugin install ai-to-interface-design@ai-to-interface-design
 
 ### OpenCode
 
-Add to your `opencode.json`:
+Copy the `plugin/skills/prototype` folder from this repo into one of OpenCode's [skill directories](https://opencode.ai/docs/skills/):
 
-```json
-{
-  "plugin": ["ai-to-interface-design"]
-}
+**Project-local** (scoped to one project):
+```
+.opencode/skills/prototype/
 ```
 
-The plugin auto-installs via Bun the next time OpenCode starts. The `/prototype` command works the same way as in Claude Code.
+**Global** (available in all projects):
+```
+~/.config/opencode/skills/prototype/
+```
+
+The folder must contain `SKILL.md` and the `references/` subfolder.
 
 ## Usage
 
@@ -40,7 +44,7 @@ The plugin auto-installs via Bun the next time OpenCode starts. The `/prototype`
 ## Requirements
 
 - [Claude Code](https://claude.com/claude-code) CLI, or
-- [OpenCode](https://opencode.ai) with Bun available
+- [OpenCode](https://opencode.ai)
 
 ## License
 
