@@ -7,6 +7,12 @@ Generate multiple structurally distinct UI component prototypes with an in-brows
 ### Quick Install
 
 ```bash
+npx skills add I2olanD/ai.to.prototype
+```
+
+### Alternative Install
+
+```bash
 git clone https://github.com/I2olanD/ai.to.prototype.git
 cd ai.to.prototype
 ./install.sh
