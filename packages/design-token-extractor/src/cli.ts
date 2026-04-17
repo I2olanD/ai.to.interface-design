@@ -121,11 +121,18 @@ async function resolveInput(
 // Flag coercion
 // --------------------------------------------------------------------------
 
+const MAX_TIMEOUT_SECONDS = 3600;
+
 function parseTimeoutMs(raw: string | undefined, fallbackMs: number): number {
   if (raw === undefined) return fallbackMs;
   const seconds = Number.parseFloat(raw);
   if (!Number.isFinite(seconds) || seconds <= 0) {
     throw new UserError(`--timeout must be a positive number, got: ${raw}`);
+  }
+  if (seconds > MAX_TIMEOUT_SECONDS) {
+    throw new UserError(
+      `--timeout must not exceed ${MAX_TIMEOUT_SECONDS}s, got: ${raw}`,
+    );
   }
   return Math.round(seconds * 1000);
 }

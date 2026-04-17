@@ -25,7 +25,6 @@
     "access": "public"
   },
   "dependencies": {
-    "cheerio": "^1.0.0",
     "commander": "^11.0.0",
     "ora": "^8.0.0",
     "playwright": "^1.44.0",

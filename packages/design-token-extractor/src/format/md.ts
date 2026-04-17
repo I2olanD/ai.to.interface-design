@@ -112,7 +112,7 @@ function renderColorTable(entries: ReadonlyArray<[string, Token]>): string {
     const swatch = renderSwatch(value);
     const count = token.$extensions['com.dte.usage'].count;
     const confidence = token.$extensions['com.dte.confidence'];
-    return `| ${name} | ${swatch} | ${value} | ${count} | ${confidence} |`;
+    return `| ${escapeMdCell(name)} | ${swatch} | ${escapeMdCell(value)} | ${count} | ${confidence} |`;
   });
   return [header, separator, ...rows].join('\n') + '\n';
 }
@@ -124,13 +124,29 @@ function renderPlainTable(entries: ReadonlyArray<[string, Token]>): string {
     const value = formatValue(token.$value);
     const count = token.$extensions['com.dte.usage'].count;
     const confidence = token.$extensions['com.dte.confidence'];
-    return `| ${name} | ${value} | ${count} | ${confidence} |`;
+    return `| ${escapeMdCell(name)} | ${escapeMdCell(value)} | ${count} | ${confidence} |`;
   });
   return [header, separator, ...rows].join('\n') + '\n';
 }
 
 function renderSwatch(value: string): string {
-  return `<span style="display:inline-block;width:16px;height:16px;background:${value};border:1px solid #ccc;"></span>`;
+  // HTML-escape to neutralize attacker-controlled CSS values that could
+  // break out of the style attribute into arbitrary HTML when the Markdown
+  // output is rendered (GitHub, VSCode, etc.).
+  return `<span style="display:inline-block;width:16px;height:16px;background:${escapeHtml(value)};border:1px solid #ccc;"></span>`;
+}
+
+function escapeHtml(input: string): string {
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function escapeMdCell(input: string): string {
+  return input.replace(/\|/g, '\\|').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function formatValue(value: Token['$value']): string {

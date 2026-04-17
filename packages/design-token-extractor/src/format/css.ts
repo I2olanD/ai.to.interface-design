@@ -62,12 +62,19 @@ function themeOf(token: Token): ThemeTag {
 }
 
 function renderValue(value: Token['$value']): string {
-  if (typeof value === 'string') return value;
-  if (typeof value === 'number') return String(value);
-  // Composite values (e.g. shadow objects) — render as JSON so output stays
-  // parseable as a CSS value string. Real shadow rendering can be refined
-  // later; for now the important invariant is postcss can parse the file.
-  return JSON.stringify(value);
+  const raw =
+    typeof value === 'string'
+      ? value
+      : typeof value === 'number'
+        ? String(value)
+        : JSON.stringify(value);
+  // Defense in depth: computed CSS values from a browser should never contain
+  // raw `{` or `}` but we refuse to emit them to prevent CSS rule injection
+  // if the invariant ever breaks (e.g. future source-CSS parsing path).
+  if (/[{}]/.test(raw)) {
+    return raw.replace(/[{}]/g, '');
+  }
+  return raw;
 }
 
 function flatEntriesForTheme(
