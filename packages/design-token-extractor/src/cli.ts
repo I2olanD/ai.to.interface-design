@@ -65,6 +65,7 @@ const cliOptionsSchema = z.object({
   minConfidence: z.number().min(0).max(1),
   theme: z.enum(['auto', 'light', 'dark']),
   fast: z.boolean(),
+  allowPrivateHosts: z.boolean(),
 });
 
 // --------------------------------------------------------------------------
@@ -81,6 +82,7 @@ type RawExtractFlags = {
   theme?: string;
   fast?: boolean;
   userAgent?: string;
+  allowPrivateHosts?: boolean;
 };
 
 // --------------------------------------------------------------------------
@@ -266,6 +268,7 @@ async function runExtract(
       minConfidence: parseMinConfidence(flags.minConfidence, 0),
       theme: parseThemeFlag(flags.theme),
       fast: flags.fast === true,
+      allowPrivateHosts: flags.allowPrivateHosts === true,
     };
 
     const parsedOpts: CliOptions = cliOptionsSchema.parse(rawOpts);
@@ -359,6 +362,10 @@ function buildProgram(): Command {
     )
     .option('--fast', 'Skip headless browser; static HTML only (v2)')
     .option('--user-agent <string>', 'Override User-Agent (reserved for v2)')
+    .option(
+      '--allow-private-hosts',
+      'Allow navigation to private / loopback / link-local addresses',
+    )
     .action(async (urlArg: string | undefined, flags: RawExtractFlags) => {
       await runExtract(urlArg, flags);
     });

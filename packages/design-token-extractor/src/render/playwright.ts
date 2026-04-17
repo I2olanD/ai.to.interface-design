@@ -40,6 +40,47 @@ export type RenderOptions = {
    * Production callers should not need this.
    */
   onBrowser?: (browser: Browser) => void;
+
+  /**
+   * When true, the renderer allows navigation and sub-resource requests to
+   * RFC-1918 / loopback / link-local addresses. Off by default: a page on an
+   * untrusted domain can otherwise pivot into internal networks (SSRF)
+   * via XHR / fetch / images / iframes executed by the headless browser.
+   *
+   * Opt in when extracting from localhost, LAN design systems, or internal
+   * docs. `file://` URLs are never affected by this flag.
+   */
+  allowPrivateHosts?: boolean;
+};
+
+/**
+ * Returns true for hostnames that resolve to addresses the renderer refuses
+ * to hit when `allowPrivateHosts` is false. Matches the common SSRF-pivot
+ * ranges: IPv4 loopback / link-local / RFC-1918, plus IPv6 loopback and
+ * unique-local (fc00::/7). DNS-based bypass (hostname resolving to a private
+ * IP) is NOT handled here — defense is host-string only; pair with a network
+ * policy if you need stronger guarantees.
+ */
+const isPrivateHost = (hostname: string): boolean => {
+  const h = hostname.toLowerCase().replace(/^\[|\]$/g, '');
+  if (h === 'localhost' || h === 'ip6-localhost' || h === 'ip6-loopback') {
+    return true;
+  }
+  // IPv6 loopback / link-local / unique-local
+  if (h === '::1' || h.startsWith('fe80:') || /^f[cd][0-9a-f]{2}:/i.test(h)) {
+    return true;
+  }
+  // IPv4 dotted quad
+  const m = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (!m) return false;
+  const [a, b] = [Number(m[1]), Number(m[2])];
+  if (a === 10) return true;               // 10.0.0.0/8
+  if (a === 127) return true;              // 127.0.0.0/8 loopback
+  if (a === 169 && b === 254) return true; // 169.254.0.0/16 link-local
+  if (a === 172 && b >= 16 && b <= 31) return true; // 172.16.0.0/12
+  if (a === 192 && b === 168) return true; // 192.168.0.0/16
+  if (a === 0) return true;                // 0.0.0.0/8
+  return false;
 };
 
 /**
@@ -134,11 +175,43 @@ export const render = async (
   };
   process.once('SIGINT', onSigint);
 
+  const allowPrivate = opts?.allowPrivateHosts === true;
+
+  // For URL inputs, pre-check the target host. `file://` is allowed through
+  // because local file rendering is a deliberate feature (auth-wall bypass).
+  if (input.kind === 'url' && !allowPrivate) {
+    const hostname = new URL(targetUrl).hostname;
+    if (isPrivateHost(hostname)) {
+      throw new ExtractionError(
+        `Refusing to navigate to private host ${hostname} — pass --allow-private-hosts to override`,
+      );
+    }
+  }
+
   const operation = (async (): Promise<RawStyleRecord[]> => {
     browser = await chromium.launch({ headless: true });
     opts?.onBrowser?.(browser);
 
     const context = await browser.newContext();
+
+    // Block sub-resource requests (XHR, fetch, iframe, img, etc.) to private
+    // addresses unless the user opted in. This limits SSRF pivot surface when
+    // rendering untrusted public pages.
+    if (!allowPrivate) {
+      await context.route('**/*', async (route) => {
+        try {
+          const hostname = new URL(route.request().url()).hostname;
+          if (hostname && isPrivateHost(hostname)) {
+            await route.abort('blockedbyclient');
+            return;
+          }
+        } catch {
+          // Malformed URL — fall through and let the browser decide.
+        }
+        await route.continue();
+      });
+    }
+
     const page = await context.newPage();
     await page.emulateMedia({ colorScheme: theme });
     await page.goto(targetUrl, { waitUntil: 'networkidle' });

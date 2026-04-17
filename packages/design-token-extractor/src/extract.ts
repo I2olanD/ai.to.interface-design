@@ -37,6 +37,7 @@
  * that run against source (no bundling) fall back to '0.0.0-dev'.
  */
 
+import { basename } from 'node:path';
 import { applyScores } from './apply-score';
 import { categorizeColors } from './categorize/color';
 import { categorizeMotion } from './categorize/motion';
@@ -88,9 +89,12 @@ export async function extract(opts: CliOptions): Promise<TokenSet> {
 /**
  * Validates the input source and returns the canonical string to store in
  * `$metadata.source.value`:
- *   - URL input: validated by `parseUrl` (scheme allowlist); returned as
- *     the stringified parsed URL so `http://site` becomes `http://site/`.
- *   - File input: absolute path returned by `loadFile`.
+ *   - URL input: validated by `parseUrl` (scheme allowlist). Userinfo
+ *     (`user:pass@`) is stripped before serialization so credentials do
+ *     not leak into token output that may be committed to a repo.
+ *   - File input: only the basename is returned (e.g. `page.html`). The
+ *     full absolute path is an information-disclosure risk — it reveals
+ *     the developer's filesystem layout when output files are committed.
  *
  * We rely on `render()` to navigate to the target again via `pathToFileURL`
  * / the raw URL string; this function's only job is to surface the value
@@ -99,10 +103,12 @@ export async function extract(opts: CliOptions): Promise<TokenSet> {
 async function resolveInput(opts: CliOptions): Promise<string> {
   if (opts.input.kind === 'url') {
     const parsed = parseUrl(opts.input.url);
+    parsed.username = '';
+    parsed.password = '';
     return parsed.toString();
   }
   const { absPath } = await loadFile(opts.input.path);
-  return absPath;
+  return basename(absPath);
 }
 
 /**
@@ -113,13 +119,15 @@ async function resolveInput(opts: CliOptions): Promise<string> {
  * page) we drop the dark pass to avoid emitting phantom dark tokens.
  */
 async function gatherRecords(opts: CliOptions): Promise<RawStyleRecord[]> {
+  const renderOpts = { allowPrivateHosts: opts.allowPrivateHosts };
+
   if (opts.theme === 'light' || opts.theme === 'dark') {
-    return render(opts.input, opts.theme, opts.timeoutMs);
+    return render(opts.input, opts.theme, opts.timeoutMs, renderOpts);
   }
 
   // theme === 'auto'
-  const lightRecords = await render(opts.input, 'light', opts.timeoutMs);
-  const darkRecords = await render(opts.input, 'dark', opts.timeoutMs);
+  const lightRecords = await render(opts.input, 'light', opts.timeoutMs, renderOpts);
+  const darkRecords = await render(opts.input, 'dark', opts.timeoutMs, renderOpts);
 
   if (recordsEqual(lightRecords, darkRecords)) {
     // No dark-mode rules detected — the page is theme-agnostic. Drop the

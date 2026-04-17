@@ -81,30 +81,20 @@ describe('loadFile', () => {
     });
   });
 
-  it('loads a symlink that points to a valid file and warns to stderr', async () => {
+  it('refuses to follow symlinks with a UserError', async () => {
     const real = join(workDir, 'real.html');
     const link = join(workDir, 'link.html');
-    const content = '<main>symlinked</main>';
-    await writeFile(real, content, 'utf8');
+    await writeFile(real, '<main>symlinked</main>', 'utf8');
     await symlink(real, link);
 
-    const spy = vi
-      .spyOn(process.stderr, 'write')
-      .mockImplementation(() => true);
-
-    try {
-      const result = await loadFile(link);
-      expect(result.absPath).toBe(link);
-      expect(result.html).toBe(content);
-
-      const callsMentioningSymlink = spy.mock.calls.filter((call) => {
-        const [chunk] = call;
-        return typeof chunk === 'string' && chunk.includes('symlink');
-      });
-      expect(callsMentioningSymlink.length).toBeGreaterThanOrEqual(1);
-    } finally {
-      spy.mockRestore();
-    }
+    await expect(loadFile(link)).rejects.toSatisfy((err) => {
+      return (
+        err instanceof UserError &&
+        err.exitCode === 1 &&
+        /Symlinks are not supported/.test(err.message) &&
+        err.message.includes(link)
+      );
+    });
   });
 
   it('emits a stderr warning for non-.html extensions but still loads', async () => {

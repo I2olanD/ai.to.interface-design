@@ -29,7 +29,9 @@ export function parseUrl(input: string): URL {
   try {
     parsed = new URL(trimmed);
   } catch (cause) {
-    throw new UserError(`Invalid URL: ${trimmed}`, { cause });
+    // Redact userinfo so embedded credentials do not leak into CI logs or
+    // error reporters when an otherwise-valid URL fails to parse.
+    throw new UserError(`Invalid URL: ${redactUserinfo(trimmed)}`, { cause });
   }
 
   if (!ALLOWED_PROTOCOLS.has(parsed.protocol)) {
@@ -39,4 +41,10 @@ export function parseUrl(input: string): URL {
   }
 
   return parsed;
+}
+
+function redactUserinfo(raw: string): string {
+  // Match `scheme://userinfo@rest` where userinfo contains any non-`/@` chars.
+  // Preserves the rest of the string for context.
+  return raw.replace(/^(\w+:\/\/)[^/@]+@/, '$1[REDACTED]@');
 }

@@ -41,6 +41,7 @@ const baseOpts = (overrides: Partial<CliOptions> = {}): CliOptions => ({
   minConfidence: 0,
   theme: 'auto',
   fast: false,
+  allowPrivateHosts: false,
   ...overrides,
 });
 
@@ -64,7 +65,6 @@ describe(
   'extract — pipeline orchestrator',
   () => {
     it('returns a valid TokenSet for simple.html with theme=auto', async () => {
-      const absPath = fixturePath('simple.html');
       const tokenSet = await extract(baseOpts({ theme: 'auto' }));
 
       expect(tokenSet.$schema).toBe(
@@ -74,9 +74,12 @@ describe(
       expect(typeof tokenSet.$metadata.version).toBe('string');
       expect(tokenSet.$metadata.version.length).toBeGreaterThan(0);
       expect(() => new Date(tokenSet.$metadata.extractedAt)).not.toThrow();
+      // Security L3: $metadata.source.value for file inputs is the basename
+      // only (not the full absolute path) to avoid leaking the developer's
+      // filesystem layout into committed output files.
       expect(tokenSet.$metadata.source).toEqual({
         kind: 'file',
-        value: absPath,
+        value: 'simple.html',
       });
 
       const colors = Object.values(tokenSet.color);

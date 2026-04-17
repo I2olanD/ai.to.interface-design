@@ -24,6 +24,7 @@ export type CliOptions = {
   minConfidence: number;
   theme: Theme;
   fast: boolean;
+  allowPrivateHosts: boolean;
 };
 
 export type StyleSource = 'stylesheet' | 'inline';

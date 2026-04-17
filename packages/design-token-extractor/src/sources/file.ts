@@ -5,13 +5,14 @@
  *   - Resolve the input path to absolute (trimmed).
  *   - ENOENT                  → UserError("File not found: <absPath>")
  *   - Directory entry          → UserError("Not a file: <absPath>")
- *   - Symlink                  → warn to stderr, continue.
+ *   - Symlink                  → UserError (refuse to follow — traversal risk).
  *   - Extension ≠ .html        → warn to stderr, continue.
  *   - Otherwise                → read UTF-8 content and return { absPath, html }.
  *
  * `lstat` is used (not `stat`) so symlinks can be detected before their
- * targets are followed — the warning is a defense-in-depth cue per SDD
- * §"System-Wide Patterns → Security".
+ * targets are followed. Earlier versions warned and continued; that made the
+ * warning misleading because `readFile` would then transparently follow the
+ * link. Refusing outright keeps the tool honest for shared/CI environments.
  */
 
 import { lstat, readFile } from 'node:fs/promises';
@@ -30,7 +31,7 @@ export async function loadFile(
   }
 
   if (stats.isSymbolicLink()) {
-    process.stderr.write(`warning: ${absPath} is a symlink\n`);
+    throw new UserError(`Symlinks are not supported: ${absPath}`);
   }
 
   if (extname(absPath).toLowerCase() !== '.html') {
