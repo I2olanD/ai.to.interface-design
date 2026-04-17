@@ -35,7 +35,7 @@ version: "1.0"
 A one-command CLI that extracts a W3C DTCG–compatible design token set from any public website or local HTML file in under 60 seconds, so developers and designers stop hand-copying colors and measurements from rendered pages.
 
 ### Problem Statement
-Teams currently extract design tokens from live sites by manually inspecting elements, copying hex values, and guessing scale patterns. Research (`.research/spec-004-design-extractor-research.md` §1) documents 2–4 hours per extraction across 5 personas, with error rates high enough that migration audits catch only ~60% of edge cases. Consequences: slow MVP delivery, design drift against brand guidelines, reinvented tokens across client projects, and shadow design systems.
+Teams currently extract design tokens from live sites by manually inspecting elements, copying hex values, and guessing scale patterns. Research (`.start/specs/005-design-token-extractor/research.md` §1) documents 2–4 hours per extraction across 5 personas, with error rates high enough that migration audits catch only ~60% of edge cases. Consequences: slow MVP delivery, design drift against brand guidelines, reinvented tokens across client projects, and shadow design systems.
 
 ### Value Proposition
 - **Speed:** extraction in <2 minutes vs. 2–4 hours manual
@@ -269,7 +269,7 @@ Telemetry is **opt-in** (`--telemetry on` or env var). No data retention server-
 - **Unique differentiator:** CLI + DTCG-native + computed-style + framework-agnostic.
 
 ### User Research
-Full persona/story/AC/edge-case research: `.research/spec-004-design-extractor-research.md` (2026-04-15, 12 edge cases, 10 AC, 5 personas, 8 stories).
+Full persona/story/AC/edge-case research: `.start/specs/005-design-token-extractor/research.md` (2026-04-15, 12 edge cases, 10 AC, 5 personas, 8 stories).
 
 ### Market Data
 Design systems tooling market growing (Figma $20B acquisition, Tokens Studio, Style Dictionary, Supernova). DTCG spec gaining traction as neutral exchange format. No dominant CLI-first extractor exists — greenfield niche.

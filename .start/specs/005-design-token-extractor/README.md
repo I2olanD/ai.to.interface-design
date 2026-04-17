@@ -1,4 +1,4 @@
-# Specification: 001-design-token-extractor
+# Specification: 005-design-token-extractor
 
 ## Status
 
@@ -22,6 +22,7 @@
 | Date | Decision | Rationale |
 |------|----------|-----------|
 | 2026-04-17 | Spec ID 001 (not 004) | `spec.py` auto-assigned. Research doc labelled "spec-004" is historical tag, not spec ID. |
+| 2026-04-17 | Renumbered 001 → 005, relocated to `.start/specs/` | Merge collision: existing `.start/specs/001-*` occupied, existing `004-design-system-extractor-skill` differs. Chose new ID 005 for this CLI spec. Research doc moved to this dir as `research.md`. |
 | 2026-04-17 | Run full PRD → SDD → PLAN | User chose recommended path. CLI currently stub; need proper spec before impl. |
 | 2026-04-17 | ADR-1 Playwright chromium | User confirmed. Over Puppeteer: `emulateMedia` for theme, auto-wait, future multi-browser. |
 | 2026-04-17 | ADR-2 W3C DTCG draft format | User confirmed. Output canonical format; version stamped in `$metadata`. |
@@ -40,7 +41,7 @@
 
 ## Context
 
-Source: `.research/spec-004-design-extractor-research.md` (2026-04-15).
+Source: `research.md` (moved from `.research/spec-004-design-extractor-research.md`, 2026-04-15).
 
 Package `packages/design-token-extractor/` scaffolded with commander/cheerio/postcss/ora deps. `src/cli.ts` is 1-line stub. Deps missing for headless render (no puppeteer/playwright).
 

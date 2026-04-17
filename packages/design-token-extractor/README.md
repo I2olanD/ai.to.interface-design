@@ -102,7 +102,7 @@ No partial output file is written on failure (atomic temp + rename).
 
 ## Spec
 
-See the full specification, ADRs, and decisions log at [`docs/specs/001-design-token-extractor/`](../../docs/specs/001-design-token-extractor/).
+See the full specification, ADRs, and decisions log at [`.start/specs/005-design-token-extractor/`](../../.start/specs/005-design-token-extractor/).
 
 ## License
 

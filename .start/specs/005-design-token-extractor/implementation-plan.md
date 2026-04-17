@@ -41,7 +41,7 @@ version: "1.0"
 
 ### Deviation Protocol
 
-1. Document deviation + rationale in `docs/specs/001-design-token-extractor/README.md` Decisions Log.
+1. Document deviation + rationale in `.start/specs/005-design-token-extractor/README.md` Decisions Log.
 2. Get user approval before proceeding.
 3. Update SDD if deviation improves design.
 
@@ -58,9 +58,9 @@ version: "1.0"
 *GATE: Read all files before starting implementation.*
 
 **Specification:**
-- `docs/specs/001-design-token-extractor/product-requirements.md` — PRD
-- `docs/specs/001-design-token-extractor/solution-design.md` — SDD
-- `.research/spec-004-design-extractor-research.md` — Source research (persona, AC, edge cases)
+- `.start/specs/005-design-token-extractor/product-requirements.md` — PRD
+- `.start/specs/005-design-token-extractor/solution-design.md` — SDD
+- `.start/specs/005-design-token-extractor/research.md` — Source research (persona, AC, edge cases)
 - `CLAUDE.md` (user global) — TDD mandatory, no barrels, security-first
 
 **Key Design Decisions (from SDD §Architecture Decisions):**
@@ -549,7 +549,7 @@ Final validation across fixtures and real-world smoke.
 - [ ] **T9.4 Specification compliance audit** `[activity: business-acceptance]`
 
   - [ ] Every PRD Must-Have Feature has passing AC test
-  - [ ] Every PRD Gherkin AC mapped to a test case (create `docs/specs/001-design-token-extractor/AC-MATRIX.md` or inline comment)
+  - [ ] Every PRD Gherkin AC mapped to a test case (create `.start/specs/005-design-token-extractor/AC-MATRIX.md` or inline comment)
   - [ ] All SDD EARS criteria verified
   - [ ] README for package written (install, usage, examples) `[ref: PRD §User Journey]`
   - [ ] CHANGELOG entry added at package root

@@ -46,11 +46,11 @@ version: "1.0"
 
 #### Documentation Context
 ```yaml
-- doc: docs/specs/001-design-token-extractor/product-requirements.md
+- doc: .start/specs/005-design-token-extractor/product-requirements.md
   relevance: CRITICAL
   why: "PRD drives every feature, AC, and risk tracked here."
 
-- doc: .research/spec-004-design-extractor-research.md
+- doc: .start/specs/005-design-token-extractor/research.md
   relevance: HIGH
   why: "Original requirements research — 12 edge cases, 10 AC, 5 personas."
 
