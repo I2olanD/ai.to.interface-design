@@ -1,5 +1,7 @@
-.security-research/
 .start/
+docs/
+
+.security-research/
 **/node_modules/
 
 # Secrets and credentials
