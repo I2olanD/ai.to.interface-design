@@ -1,6 +1,6 @@
 {
   "name": "@ai.to.design/design-token-extractor",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Extract design tokens from any website into W3C DTCG JSON",
   "type": "module",
   "bin": {
