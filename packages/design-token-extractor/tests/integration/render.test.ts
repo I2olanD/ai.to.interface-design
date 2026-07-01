@@ -35,6 +35,7 @@ const fixtureInput = (name: string): Input => ({
 
 describe(
   'render — Playwright integration',
+  { timeout: 60_000 },
   () => {
     it('returns a non-empty array of RawStyleRecord for a simple file fixture', async () => {
       const records = await render(
@@ -185,5 +186,4 @@ describe(
       expect(url.startsWith('file://')).toBe(true);
     });
   },
-  { timeout: 60_000 },
 );

@@ -25,21 +25,22 @@
     "access": "public"
   },
   "dependencies": {
-    "commander": "^11.0.0",
-    "ora": "^8.0.0",
-    "playwright": "^1.44.0",
-    "postcss": "^8.4.24",
-    "zod": "^3.23.0"
+    "commander": "^15.0.0",
+    "ora": "^9.4.1",
+    "playwright": "^1.61.1",
+    "postcss": "^8.5.16",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/jsdom": "^28.0.1",
-    "@types/node": "^20.0.0",
-    "eslint": "^9.0.0",
-    "jsdom": "^29.0.2",
-    "tsup": "^8.0.0",
-    "typescript": "^5.2.0",
-    "typescript-eslint": "^8.0.0",
-    "vitest": "^2.0.0"
+    "@types/jsdom": "^28.0.3",
+    "@types/node": "^24.0.0",
+    "eslint": "^10.6.0",
+    "globals": "^17.7.0",
+    "jsdom": "^29.1.1",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.1",
+    "vitest": "^4.1.9"
   },
   "keywords": [
     "design-tokens",
