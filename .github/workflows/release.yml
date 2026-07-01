@@ -59,33 +59,66 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '22'  # prototype requires >=22; CLI requires >=18
           registry-url: 'https://registry.npmjs.org'
+
+      # Gate the release on tests BEFORE any version bump/tag/publish.
+      - name: Test CLI (incl. e2e)
+        working-directory: packages/design-token-extractor
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm test
+
+      - name: Test prototype
+        working-directory: packages/prototype
+        run: |
+          npm ci
+          npm test
 
       - name: Update version files
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${VERSION}\"/" .claude-plugin/marketplace.json
           sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${VERSION}\"/" plugin/.claude-plugin/plugin.json
-          cd packages/design-token-extractor
-          npm version "${VERSION}" --no-git-tag-version --allow-same-version
+          ( cd packages/design-token-extractor && npm version "${VERSION}" --no-git-tag-version --allow-same-version )
+          ( cd packages/prototype && npm version "${VERSION}" --no-git-tag-version --allow-same-version )
+
+      # Rebuild the prototype runtime and repin its SRI hash in the skill so the
+      # served bytes and the hash the skill injects stay in lockstep.
+      - name: Build prototype and repin SRI hash
+        run: |
+          ( cd packages/prototype && npm run build )
+          HASH="sha384-$(openssl dgst -sha384 -binary packages/prototype/dist/prototype.min.js | openssl base64 -A)"
+          echo "prototype.min.js integrity: ${HASH}"
+          sed -i -E "s#sha384-[A-Za-z0-9+/=]+#${HASH}#g" \
+            plugin/skills/prototype/SKILL.md \
+            plugin/skills/prototype/references/dom-contract-v1.md
 
       - name: Commit, tag, and push
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          git add .claude-plugin/marketplace.json plugin/.claude-plugin/plugin.json packages/design-token-extractor/package.json
+          git add .claude-plugin/marketplace.json plugin/.claude-plugin/plugin.json \
+            packages/design-token-extractor/package.json \
+            packages/prototype/package.json \
+            plugin/skills/prototype/SKILL.md \
+            plugin/skills/prototype/references/dom-contract-v1.md
           git commit -m "chore: release v${VERSION} [skip ci]"
           git tag "v${VERSION}"
           git push origin main --tags
 
-      - name: Install and build CLI
+      - name: Build CLI
         working-directory: packages/design-token-extractor
-        run: |
-          npm ci
-          npm run build
+        run: npm run build
 
       - name: Publish CLI to npm
         working-directory: packages/design-token-extractor
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --provenance
+
+      - name: Publish prototype to npm
+        working-directory: packages/prototype
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --provenance
