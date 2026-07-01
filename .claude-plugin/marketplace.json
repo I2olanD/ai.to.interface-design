@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "UI component prototyping plugin for Claude Code",
-    "version": "1.6.0"
+    "version": "1.6.1"
   },
   "plugins": [
     {
