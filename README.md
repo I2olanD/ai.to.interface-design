@@ -1,8 +1,27 @@
 # ai.to.prototype
 
-A toolkit for AI-assisted UI design — concept work, design-token extraction, and rapid component prototyping with an in-browser variant picker.
+A toolkit for AI-assisted UI design - concept work, design-token extraction, and rapid component prototyping with an in-browser variant picker.
 
 Ships as a Claude Code / OpenCode plugin bundling three skills, plus a standalone CLI for design-token extraction.
+
+## Quick Start
+
+Get from zero to a token file in about 60 seconds.
+
+```bash
+# 1. Install the CLI (Node.js >= 18 required)
+npm i -g @ai.to.design/design-token-extractor
+
+# 2. Install the headless browser (one-time, ~200 MB)
+npx playwright install chromium
+
+# 3. Extract tokens from any public site
+design-token-extractor extract https://example.com --out tokens.json
+```
+
+You will see an `Extracting design tokens...` spinner, then `✔ Done`, and a `tokens.json` file is written to the current directory.
+
+See [Example Outputs](#example-outputs) for what that file contains, and [Troubleshooting](#troubleshooting) if the first run fails.
 
 ## What's in the box
 
@@ -72,7 +91,7 @@ The `extract-tokens` skill will fall back to `npx @ai.to.design/design-token-ext
 
 ## Usage
 
-### `/prototype` — generate UI variants
+### `/prototype` - generate UI variants
 
 ```
 /prototype "hero section"
@@ -85,11 +104,11 @@ Flags: `--variants N` (2–9, default 4), `--style <direction>`, `--framework <n
 What it does:
 
 1. Scans your project for framework and design language (Next.js, React, Vue, Svelte, Astro, Tailwind, shadcn/ui, MUI, Chakra, etc.)
-2. Generates structurally distinct variants — different layouts, not just color swaps
+2. Generates structurally distinct variants - different layouts, not just color swaps
 3. Adds a variant picker toolbar so you can flip through them in the browser
 4. After you pick a winner, finalizes by extracting just that variant and stripping all picker scaffolding
 
-### `/extract-tokens` — pull a design token set
+### `/extract-tokens` - pull a design token set
 
 ```
 /extract-tokens https://linear.app
@@ -101,9 +120,9 @@ Flags: `--format json|css|js|md` (default `json`), `--out <path>`, `--min-confid
 
 Output covers `color`, `typography`, `spacing`, `radius`, `shadow`, `zIndex`, `breakpoint`, `motion`, each token wrapped in W3C DTCG `$value` / `$type` / `$extensions` envelopes with usage count, confidence score, and detected theme.
 
-### `application-design-concept` — concept and system work
+### `application-design-concept` - concept and system work
 
-Auto-invoked when you ask for a design concept, visual direction, design system, brand language, mood, aesthetic direction, theme, design tokens, style guide, art direction, or visual identity — anything upstream of writing components.
+Auto-invoked when you ask for a design concept, visual direction, design system, brand language, mood, aesthetic direction, theme, design tokens, style guide, art direction, or visual identity - anything upstream of writing components.
 
 Walks through five stages: **Brief** (who, what, why, what feeling) → **Position** (one anchor, what we reject) → **System** (typography, color, spacing, motion, voice, components) → **Audit** (anti-slop sweep + human-touch check) → **Showcase** (optional proof artifact). References include an aesthetic-lineages catalog, a concept-brief template, an anti-slop checklist, and a design-system spec template.
 
@@ -114,11 +133,107 @@ Walks through five stages: **Brief** (who, what, why, what feeling) → **Positi
 /prototype "pricing table" --style "match tokens in .design-tokens/linear.css"
 ```
 
+## Example Outputs
+
+Each token is a W3C DTCG `$value` / `$type` / `$extensions` envelope.
+The `$extensions` carry a `com.dte.confidence` score and a `com.dte.usage` block with the `selectors` that use the token and their `count`.
+
+```json
+{
+  "color": {
+    "color-1": {
+      "$value": "#3b82f6",
+      "$type": "color",
+      "$extensions": {
+        "com.dte.usage": { "selectors": ["button.primary", "a"], "count": 12 },
+        "com.dte.confidence": 0.9,
+        "com.dte.source": "stylesheet",
+        "com.dte.theme": "light"
+      }
+    }
+  },
+  "typography": {
+    "size": {
+      "font-size-1": {
+        "$value": 16,
+        "$type": "dimension",
+        "$extensions": {
+          "com.dte.usage": { "selectors": ["body"], "count": 1 },
+          "com.dte.confidence": 0.8,
+          "com.dte.source": "stylesheet",
+          "com.dte.theme": "light"
+        }
+      }
+    },
+    "family": {},
+    "weight": {}
+  }
+}
+```
+
+Eight top-level categories are always present (empty when no tokens are observed): `color`, `typography`, `spacing`, `radius`, `shadow`, `zIndex`, `breakpoint`, `motion`.
+
+Four output formats are available via `--format`: `json` (default), `css`, `js`, and `md`.
+
+See [`packages/design-token-extractor/README.md`](packages/design-token-extractor/README.md) for the full output reference, including css, js, and md samples.
+
+## Real World Use Cases
+
+### Audit before a design-system migration
+
+Capture a confidence-filtered baseline of your current site and commit it, so you can diff against it as the migration progresses.
+
+```bash
+design-token-extractor extract https://our-site.com --min-confidence 0.5 --out baseline.json
+```
+
+### Match a reference brand, then prototype
+
+Pull a reference brand's tokens as CSS, then generate components that match them.
+
+```bash
+design-token-extractor extract https://linear.app --format css --out .design-tokens/linear.css
+```
+
+```
+/prototype "pricing table" --style "match tokens in .design-tokens/linear.css"
+```
+
+### Extract from an auth-walled or bot-blocking site
+
+Save the rendered page to a local HTML file and extract from that, bypassing login walls and headless-browser blocks.
+
+```bash
+design-token-extractor extract --file ./page.html --out tokens.json
+```
+
 ## Requirements
 
 - [Claude Code](https://claude.com/claude-code) CLI, or
 - [OpenCode](https://opencode.ai)
 - Node.js >= 18 (for the `design-token-extractor` CLI used by `/extract-tokens`)
+
+## Troubleshooting
+
+The CLI uses these exit codes: `0` success, `1` user error (bad flag, URL, or file), `2` extraction or network failure, `3` internal error.
+
+| Symptom | Fix |
+|---------|-----|
+| Browser error or "Executable doesn't exist" on first run | Run `npx playwright install chromium` (the most common first-run miss). |
+| "Extraction timed out after 60s" | Raise the limit with `--timeout 120`, or use `--file` on a saved page. |
+| "Refusing to navigate to private host ..." | Add `--allow-private-hosts` for localhost or internal IPs. |
+| Site blocks headless browsers or needs login | Save the page and use `--file ./page.html`. |
+| ENOENT / EACCES writing output | Ensure the `--out` parent directory exists and is writable. |
+
+## Roadmap
+
+Planned for v2 (not yet implemented, alongside the current v1 limitations):
+
+- Source-CSS parsing: resolve `var()` chains and populate breakpoint tokens from `@media` rules (today the extractor reads computed styles only, so `breakpoint` is empty).
+- `--fast` static-only mode: skip the Chromium download for simple static pages (the flag is accepted today but warns and falls back to the headless renderer).
+- `--user-agent` override: currently reserved and ignored.
+
+Both packages (`design-token-extractor` and `prototype`) release in lockstep at the same version.
 
 ## Security
 
