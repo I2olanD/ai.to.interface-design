@@ -48,7 +48,7 @@ The canonical attribute schema for prototype.js variant discovery.
 The `prototype.min.js` script is served from `https://ai-to-design.com/prototype.min.js`. Add it via a script tag with a Subresource Integrity hash — no file copy needed.
 
 ```html
-<script src="https://ai-to-design.com/prototype.min.js" integrity="sha384-3G+KXjkUOSYBDks/eO/Og2SUkI6Y7+rWsmUtaxcqVkUdipNwHWsm0PyGvwtv7kRs" crossorigin="anonymous"></script>
+<script src="https://ai-to-design.com/prototype.min.js" integrity="sha384-UNP7EA6Pj69hUnt7hc1+ZLJiibUCKFZ/ghrr8XjCpae1BqY5FQsMpvC36Ux9j50T" crossorigin="anonymous"></script>
 ```
 
 Always placed AFTER all variant containers.
@@ -76,7 +76,7 @@ Always placed AFTER all variant containers.
     <section class="v4">...</section>
   </div>
 </div>
-<script src="https://ai-to-design.com/prototype.min.js" integrity="sha384-3G+KXjkUOSYBDks/eO/Og2SUkI6Y7+rWsmUtaxcqVkUdipNwHWsm0PyGvwtv7kRs" crossorigin="anonymous"></script>
+<script src="https://ai-to-design.com/prototype.min.js" integrity="sha384-UNP7EA6Pj69hUnt7hc1+ZLJiibUCKFZ/ghrr8XjCpae1BqY5FQsMpvC36Ux9j50T" crossorigin="anonymous"></script>
 ```
 
 ## Rules
