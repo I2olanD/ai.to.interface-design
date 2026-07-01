@@ -1,0 +1,58 @@
+{
+  "name": "@ai.to.design/prototype",
+  "version": "1.5.1",
+  "description": "In-browser variant-picker runtime for ai.to.prototype: renders a carousel toolbar to flip through generated UI component variants via data-aitd-* attributes.",
+  "main": "dist/prototype.min.js",
+  "unpkg": "dist/prototype.min.js",
+  "jsdelivr": "dist/prototype.min.js",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "demo": "vite build && open demo/index.html",
+    "serve": "vite build && npx serve . -p 3333",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check --error-on-warnings src",
+    "lint:fix": "biome check --write src",
+    "format": "biome format --write src",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run build"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.13",
+    "jsdom": "^29.0.2",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10",
+    "vitest": "^4.1.5"
+  },
+  "keywords": [
+    "ui",
+    "prototype",
+    "variant-picker",
+    "design",
+    "carousel",
+    "components"
+  ],
+  "license": "MIT",
+  "author": "Roland Wallner",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/I2olanD/ai.to.prototype.git",
+    "directory": "packages/prototype"
+  },
+  "homepage": "https://github.com/I2olanD/ai.to.prototype/tree/main/packages/prototype#readme",
+  "bugs": {
+    "url": "https://github.com/I2olanD/ai.to.prototype/issues"
+  }
+}
