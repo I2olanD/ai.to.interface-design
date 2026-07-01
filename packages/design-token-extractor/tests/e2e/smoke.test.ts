@@ -79,6 +79,7 @@ const countTokens = (json: Record<string, unknown>): number => {
 
 describe(
   'cli — e2e smoke',
+  { timeout: 120_000 },
   () => {
     beforeAll(() => {
       execSync('npm run build', { cwd: PACKAGE_DIR, stdio: 'pipe' });
@@ -229,5 +230,4 @@ describe(
       expect(filteredCount).toBeLessThan(baselineCount);
     });
   },
-  { timeout: 120_000 },
 );

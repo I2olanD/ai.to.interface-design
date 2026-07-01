@@ -59,7 +59,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: '22'  # prototype requires >=22; CLI requires >=18
+          node-version: 'lts/*'  # Node LTS (matches mise.toml); prototype requires >=22, CLI >=18
           registry-url: 'https://registry.npmjs.org'
 
       # Gate the release on tests BEFORE any version bump/tag/publish.

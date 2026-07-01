@@ -50,6 +50,7 @@ const runCli = (args: readonly string[]): RunResult => {
 
 describe(
   'cli — commander shell',
+  { timeout: 180_000 },
   () => {
     beforeAll(() => {
       execSync('npm run build', { cwd: PACKAGE_DIR, stdio: 'pipe' });
@@ -169,5 +170,4 @@ describe(
       expect(stdout.startsWith('# Design Tokens')).toBe(true);
     });
   },
-  { timeout: 180_000 },
 );

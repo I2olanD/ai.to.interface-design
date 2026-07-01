@@ -63,6 +63,7 @@ const flattenTokens = (
 
 describe(
   'extract — pipeline orchestrator',
+  { timeout: 120_000 },
   () => {
     it('returns a valid TokenSet for simple.html with theme=auto', async () => {
       const tokenSet = await extract(baseOpts({ theme: 'auto' }));
@@ -197,5 +198,4 @@ describe(
       expect(Object.keys(second.color).length).toBeGreaterThan(0);
     });
   },
-  { timeout: 120_000 },
 );
