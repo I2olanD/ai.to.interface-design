@@ -62,10 +62,10 @@ Every prototype MUST include the variant picker script (`https://ai-to-design.co
 
 | Framework        | Script tag                                                                                                                                                                                                                         |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Next.js          | `<Script src="https://ai-to-design.com/prototype.min.js" integrity="sha384-UNP7EA6Pj69hUnt7hc1+ZLJiibUCKFZ/ghrr8XjCpae1BqY5FQsMpvC36Ux9j50T" crossOrigin="anonymous" strategy="afterInteractive" />` (import from `next/script`)   |
-| React (Vite/CRA) | `<script src="https://ai-to-design.com/prototype.min.js" integrity="sha384-UNP7EA6Pj69hUnt7hc1+ZLJiibUCKFZ/ghrr8XjCpae1BqY5FQsMpvC36Ux9j50T" crossorigin="anonymous"></script>` in `index.html`, or use a `useEffect` to inject it |
-| Vue/Svelte/Astro | `<script src="https://ai-to-design.com/prototype.min.js" integrity="sha384-UNP7EA6Pj69hUnt7hc1+ZLJiibUCKFZ/ghrr8XjCpae1BqY5FQsMpvC36Ux9j50T" crossorigin="anonymous"></script>` in the component or page                           |
-| Plain HTML       | `<script src="https://ai-to-design.com/prototype.min.js" integrity="sha384-UNP7EA6Pj69hUnt7hc1+ZLJiibUCKFZ/ghrr8XjCpae1BqY5FQsMpvC36Ux9j50T" crossorigin="anonymous"></script>` before `</body>`                                   |
+| Next.js          | `<Script src="https://ai-to-design.com/prototype.min.js" integrity="sha384-6kB4fI0aeUnB0WwfPKawy1ZbB05Okd19LfDSymnZg+5zA+J+or3m6mY0Oc4VGsfR" crossOrigin="anonymous" strategy="afterInteractive" />` (import from `next/script`)   |
+| React (Vite/CRA) | `<script src="https://ai-to-design.com/prototype.min.js" integrity="sha384-6kB4fI0aeUnB0WwfPKawy1ZbB05Okd19LfDSymnZg+5zA+J+or3m6mY0Oc4VGsfR" crossorigin="anonymous"></script>` in `index.html`, or use a `useEffect` to inject it |
+| Vue/Svelte/Astro | `<script src="https://ai-to-design.com/prototype.min.js" integrity="sha384-6kB4fI0aeUnB0WwfPKawy1ZbB05Okd19LfDSymnZg+5zA+J+or3m6mY0Oc4VGsfR" crossorigin="anonymous"></script>` in the component or page                           |
+| Plain HTML       | `<script src="https://ai-to-design.com/prototype.min.js" integrity="sha384-6kB4fI0aeUnB0WwfPKawy1ZbB05Okd19LfDSymnZg+5zA+J+or3m6mY0Oc4VGsfR" crossorigin="anonymous"></script>` before `</body>`                                   |
 
 **Content Security Policy:** If the project uses a CSP header, add `https://ai-to-design.com` to `script-src`. Remove it again after finalizing (step removes the script tag).
 
@@ -87,7 +87,7 @@ export default function PrototypeHeroSection() {
       </div>
       <Script
         src="https://ai-to-design.com/prototype.min.js"
-        integrity="sha384-UNP7EA6Pj69hUnt7hc1+ZLJiibUCKFZ/ghrr8XjCpae1BqY5FQsMpvC36Ux9j50T"
+        integrity="sha384-6kB4fI0aeUnB0WwfPKawy1ZbB05Okd19LfDSymnZg+5zA+J+or3m6mY0Oc4VGsfR"
         crossOrigin="anonymous"
         strategy="afterInteractive"
       />
