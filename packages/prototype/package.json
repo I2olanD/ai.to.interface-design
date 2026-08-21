@@ -15,7 +15,7 @@
     "build": "vite build",
     "dev": "vite build --watch",
     "demo": "vite build && open demo/index.html",
-    "serve": "vite build && npx serve . -p 3333",
+    "serve": "vite build && bunx serve . -p 3333",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "lint": "biome check --error-on-warnings src",
@@ -24,7 +24,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "bun run build"
   },
   "publishConfig": {
     "access": "public"

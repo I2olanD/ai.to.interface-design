@@ -56,6 +56,12 @@ jobs:
           echo "bump=${BUMP}" >> "$GITHUB_OUTPUT"
           echo "Next version: v${NEW_VERSION} (${BUMP} bump)"
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # npm is only used for the publish steps: `bun publish` has no --provenance flag.
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
@@ -66,29 +72,29 @@ jobs:
       - name: Test CLI
         working-directory: packages/design-token-extractor
         run: |
-          npm ci
-          npx playwright install --with-deps chromium
-          npm test
+          bun install --frozen-lockfile
+          bunx playwright install --with-deps chromium
+          bun run test
 
       - name: Test prototype
         working-directory: packages/prototype
         run: |
-          npm ci
-          npm test
+          bun install --frozen-lockfile
+          bun run test
 
       - name: Update version files
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${VERSION}\"/" .claude-plugin/marketplace.json
           sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${VERSION}\"/" plugin/.claude-plugin/plugin.json
-          ( cd packages/design-token-extractor && npm version "${VERSION}" --no-git-tag-version --allow-same-version )
-          ( cd packages/prototype && npm version "${VERSION}" --no-git-tag-version --allow-same-version )
+          ( cd packages/design-token-extractor && bun pm version "${VERSION}" --no-git-tag-version --allow-same-version )
+          ( cd packages/prototype && bun pm version "${VERSION}" --no-git-tag-version --allow-same-version )
 
       # Rebuild the prototype runtime and repin its SRI hash in the skill so the
       # served bytes and the hash the skill injects stay in lockstep.
       - name: Build prototype and repin SRI hash
         run: |
-          ( cd packages/prototype && npm run build )
+          ( cd packages/prototype && bun run build )
           HASH="sha384-$(openssl dgst -sha384 -binary packages/prototype/dist/prototype.min.js | openssl base64 -A)"
           echo "prototype.min.js integrity: ${HASH}"
           sed -i -E "s#sha384-[A-Za-z0-9+/=]+#${HASH}#g" \
@@ -109,7 +115,7 @@ jobs:
 
       - name: Build CLI
         working-directory: packages/design-token-extractor
-        run: npm run build
+        run: bun run build
 
       - name: Publish CLI to npm
         working-directory: packages/design-token-extractor

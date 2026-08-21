@@ -19,7 +19,7 @@
     "test:watch": "vitest",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "bun run build"
   },
   "publishConfig": {
     "access": "public"

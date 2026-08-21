@@ -53,7 +53,7 @@ describe(
   { timeout: 180_000 },
   () => {
     beforeAll(() => {
-      execSync('npm run build', { cwd: PACKAGE_DIR, stdio: 'pipe' });
+      execSync('bun run build', { cwd: PACKAGE_DIR, stdio: 'pipe' });
     }, 120_000);
 
     it('--help exits 0 with usage text', () => {
