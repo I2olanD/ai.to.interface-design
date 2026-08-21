@@ -101,9 +101,16 @@ jobs:
             plugin/skills/prototype/SKILL.md \
             plugin/skills/prototype/references/dom-contract-v1.md
 
+      # Bookkeeping is skipped outright when the tag is already there, so a
+      # re-run of a release that died after tagging proceeds to publish instead
+      # of failing on `tag already exists` and wedging the version forever.
       - name: Commit, tag, and push
         run: |
           VERSION="${{ steps.version.outputs.version }}"
+          if git rev-parse -q --verify "refs/tags/v${VERSION}" >/dev/null; then
+            echo "v${VERSION} is already committed and tagged; skipping bookkeeping."
+            exit 0
+          fi
           git add .claude-plugin/marketplace.json plugin/.claude-plugin/plugin.json \
             packages/design-token-extractor/package.json \
             packages/prototype/package.json \
@@ -117,23 +124,43 @@ jobs:
         working-directory: packages/design-token-extractor
         run: bun run build
 
+      # Publishing stays on npm: `bun publish` has no --provenance flag.
+      # Skipping an already-published version keeps re-runs from failing on 409.
       - name: Publish CLI to npm
         working-directory: packages/design-token-extractor
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --provenance
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          NAME="$(bun pm pkg get name | tr -d '"')"
+          if npm view "${NAME}@${VERSION}" version >/dev/null 2>&1; then
+            echo "${NAME}@${VERSION} is already on npm; skipping."
+          else
+            npm publish --provenance
+          fi
 
       - name: Publish prototype to npm
         working-directory: packages/prototype
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --provenance
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          NAME="$(bun pm pkg get name | tr -d '"')"
+          if npm view "${NAME}@${VERSION}" version >/dev/null 2>&1; then
+            echo "${NAME}@${VERSION} is already on npm; skipping."
+          else
+            npm publish --provenance
+          fi
 
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          gh release create "v${VERSION}" \
-            --title "v${VERSION}" \
-            --generate-notes
+          if gh release view "v${VERSION}" >/dev/null 2>&1; then
+            echo "Release v${VERSION} already exists."
+          else
+            gh release create "v${VERSION}" \
+              --title "v${VERSION}" \
+              --generate-notes
+          fi
